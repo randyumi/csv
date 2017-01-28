@@ -1,0 +1,35 @@
+﻿<Page x:Class="csv.ExpanseItHome"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:csv"
+      mc:Ignorable="d" 
+      Title="CSV analyzer">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ProgressBar Height="20" Grid.Column="0" Grid.Row="0" Name="progressBar1" Width="auto" />
+        <Label Name="labelCountNow" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right">0</Label>
+        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal">
+            <Label>of</Label>
+            <Label Name="labelCountEnd">0</Label>
+        </StackPanel>
+        <Button Name="viewButton" Grid.Column="0" Grid.Row="1" Click="viewButton_Click" Height="30">Open a csv file</Button>
+        <TextBox AcceptsReturn="True" Name="textBoxLog" Height="80" Width="400" Grid.Column="0" Grid.Row="2"></TextBox>
+        <StackPanel Grid.Column="1" Grid.Row="1">
+            <RadioButton Name="radioNormarize" IsChecked="True">Normalize</RadioButton>
+            <RadioButton Name="radioMean">Compute mean</RadioButton>
+            <RadioButton Name="radioSD">Compute standard deviation</RadioButton>
+        </StackPanel>
+    </Grid>
+</Page>
