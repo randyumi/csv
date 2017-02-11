@@ -14,3 +14,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/mofu', 'TestController@index');
+Route::put('/put', 'TestController@putCsv');
+Route::get('/company/{id}', 'TestController@getRecord');
