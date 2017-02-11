@@ -1,0 +1,68 @@
+---
+- hosts: vagrants
+  sudo: true
+  user: vagrant
+  vars:
+    mysql_root_password: mofumofu5
+  tasks:
+    - name: install apache
+      yum: name=httpd state=present
+      notify:
+        - restart apache
+    - name: add extra repositories
+      yum: name={{ item }} state=present
+      with_items:
+        - epel-release
+        - http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+        - http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
+    - name: install php
+      yum: name={{ item }} enablerepo=remi state=present
+      with_items:
+        - php71
+        - php-devel
+        - php-mbstring
+        - php-mysql
+        - php-gd
+      notify:
+        - restart apache
+    - name: install mysql
+      yum: name={{ item }} enablerepo=mysql56-community state=present
+      with_items:
+        - mysql-community-server
+        - mysql-community-client
+        - mysql-community-common
+        - mysql-community-libs
+        - mysql-community-libs-compat
+    - name: run mysql
+      service: name=mysqld state=started enabled=yes
+    - name: set mysql connection settings
+      template:
+        src: my.cnf.j2
+        dest: "~/.my.cnf"
+        mode: 600
+    - name: install MySQL-python
+      yum: name=MySQL-python state=present
+    - name: mysql set root password
+      command: mysqladmin -u root password {{ mysql_root_password }}
+    - name: remove anonymous user from mysql
+      mysql_user:
+        name: ''
+        host: localhost
+        state: absent
+    - name: add user to mysql
+      mysql_user:
+        name: app
+        host: "192.168.%.%"
+        password: axjil$a
+        priv: '*.*:ALL'
+        state: present
+    - name: install libselinux-python
+      yum: name=libselinux-python state=present
+    - name: setup iptables
+      template: src=iptables.j2 dest=/etc/sysconfig/iptables
+    - name: restart iptables
+      service: name=iptables state=restarted enabled=yes
+  handlers:
+    - name: restart apache
+      service: name=httpd state=restarted enabled=yes
+      
