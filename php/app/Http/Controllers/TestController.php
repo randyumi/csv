@@ -19,13 +19,20 @@ class TestController extends Controller
             mb_internal_encoding("UTF-8");
             mb_regex_encoding("UTF-8");
             DB::transaction(function() use($f){
+                $sql_values = array();
                 while($line = fgets($f)) {
                     $line = trim($line);
                     $values = mb_split(",", $line);
                         if (sizeof($values) > 2 && is_numeric($values[0]) && is_numeric($values[1]) && is_numeric($values[2])) {
-                            DB::statement('replace into account values(:id, :turnover, :cost)', array('id' => intval($values[0]), 'turnover' => intval($values[1]), 'cost' => intval($values[2])));
+                            $id = $values[0]; /* エスケープする方法がよくわからなかったが、is_numericしているのできっとっ大丈夫。 */
+                            $turnover = $values[1];
+                            $cost = $values[2];
+                            $sql_values[] = "($id, $turnover, $cost)";
                         } else {
                         }
+                }
+                if(sizeof($sql_values) > 0) {
+                    DB::statement('replace into account(id, turnover, cost) VALUES' . join(',', $sql_values)); /* あんまりよくなさそうだけどvaluesに配列突っ込む方法やquery builderでreplaceに渡す方法がわからないので */
                 }
             });
             fclose($f);
