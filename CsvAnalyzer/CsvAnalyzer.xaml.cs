@@ -7,13 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace csv
 {
@@ -73,10 +66,10 @@ namespace csv
                     Log($"Started processing {FileName}.");
                     var file = File.ReadLines(FileName);
                     initializeIndicator(file.Count());
-                    writer.WriteLine(file.First());
+                    writer.WriteLine(string.Join(",", file.First().Split(',').Take(2))); /* `~売上原価はいらないので捨てる */
                     Parallel.ForEach(file.Skip(1), it => {
-                        var line = new List<string>(/* capacity = */3);
-                        foreach(var v in it.Split(',')) { /* CSVの仕様上カンマ区切りだけとみなすと壊れるかもしれないがとりあえず大丈夫そうなのでこれで行く */
+                        var line = new List<string>(/* capacity = */2);
+                        foreach(var v in it.Split(',').Take(2)) { /* CSVの仕様上カンマ区切りだけとみなすと壊れるかもしれないがとりあえず大丈夫そうなのでこれで行く */
                             line.Add(stripNonNumericFrom(v));
                         }
                         writer.WriteLine(string.Join(",", line)); // 書き込みが別スレッドという要件にマッチしているかよくわからないので調べる
